@@ -10,7 +10,6 @@
     "CameraMixin",
     "EntityMixin",
     "EntityRendererMixin",
-    "LivingEntityMixin",
     "ModelPartMixin",
     "PlayerModelMixin",
     "accesor.ModelPartAccessor",
