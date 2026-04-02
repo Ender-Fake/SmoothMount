@@ -96,7 +96,7 @@ public abstract class EntityMixin implements MountState {
 
         Camera camera = instance.gameRenderer.getMainCamera();
         CameraModifier modifier = (CameraModifier) camera;
-        long time =  instance.options.getCameraType().isFirstPerson() ? 200 : 350;
+        long time =  instance.options.getCameraType().isFirstPerson() ? 300 : 450;
         modifier.smoothMount$setSupplierPosition(CameraLerpUtils.smoothToPosition(modifier, modifier.smoothMount$lastPosition(), time));
         modifier.smoothMount$setSupplierRotation(CameraLerpUtils.smoothToRotation(modifier, new Quaternionf(modifier.smoothMount$lastRotation()), time));
 
@@ -125,7 +125,7 @@ public abstract class EntityMixin implements MountState {
 
         if (player != Minecraft.getInstance().player) return;
         //long time = 3000;
-        long time = 150;
+        long time = 250;
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         CameraModifier modifier = (CameraModifier) camera;
         modifier.smoothMount$setSupplierPosition(CameraLerpUtils.smoothToPosition(modifier, modifier.smoothMount$lastPosition(), time));
