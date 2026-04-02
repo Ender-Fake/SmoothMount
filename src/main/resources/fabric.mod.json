@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "smoothmount",
+  "version": "${version}",
+  "name": "This mod adds smooth camera and player animations when mounting horses, camels and other mounts.",
+  "description": "SmoothMount",
+  "authors": ["Ender_Fake"],
+  "contact": {
+    "sources": "https://github.com/Ender-Fake/SmoothMount",
+    "issues": "https://github.com/Ender-Fake/SmoothMount/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/smoothmount/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.enderium.smoothmount.client.SmoothmountClient"
+    ],
+    "main": [
+      "com.enderium.smoothmount.Smoothmount"
+    ]
+  },
+  "mixins": [
+    "smoothmount.mixins.json",
+    {
+      "config": "smoothmount.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  },
+  "suggests": {
+    "emf": ">=3.0.12"
+  },
+  "accessWidener" : "smoothmount.classtweaker"
+}
