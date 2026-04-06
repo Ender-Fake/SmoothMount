@@ -9,7 +9,7 @@
     "sources": "https://github.com/Ender-Fake/SmoothMount",
     "issues": "https://github.com/Ender-Fake/SmoothMount/issues"
   },
-  "license": "MIT",
+  "license": "LGPL-3.0-only",
   "icon": "assets/smoothmount/icon.png",
   "environment": "client",
   "entrypoints": {
