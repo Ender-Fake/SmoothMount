@@ -10,9 +10,11 @@
     "CameraMixin",
     "EntityMixin",
     "EntityRendererMixin",
+    "EntityRenderStateMixin",
     "ModelPartMixin",
     "PlayerModelMixin",
     "accesor.ModelPartAccessor",
+    "emf.EMFModelPartRootMixin",
     "emf.EMFModelPartWithStateMixin"
   ],
   "injectors": {

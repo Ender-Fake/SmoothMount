@@ -5,7 +5,6 @@ import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.vehicle.VehicleEntity;
-import net.minecraft.world.entity.vehicle.minecart.Minecart;
 
 public class VehicleTypes {
 

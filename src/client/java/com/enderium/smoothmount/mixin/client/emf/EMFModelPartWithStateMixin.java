@@ -8,7 +8,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Debug;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,7 +23,7 @@ import java.lang.invoke.MethodType;
 import java.util.List;
 import java.util.Map;
 
-@Debug(export = true)
+//@Debug(export = true)
 //@Mixin(targets = "traben.entity_model_features.models.parts.EMFModelPartWithState", remap = false, priority = 1050)
 @Mixin(value = EMFModelPartWithState.class, /*remap = false,*/ priority = 1050)
 public abstract class EMFModelPartWithStateMixin extends EMFModelPart implements OtherRenderPart {

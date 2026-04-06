@@ -18,10 +18,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.text.NumberFormat;
 import java.util.function.Supplier;
 
-@Debug(export = true)
+//@Debug(export = true)
 @Mixin(Camera.class)
 public abstract class CameraMixin implements CameraModifier {
 

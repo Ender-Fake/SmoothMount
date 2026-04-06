@@ -81,16 +81,13 @@ public class PlayerModelMixin extends HumanoidModel<AvatarRenderState> {
         if (b) return;
 
 
-        if (pState.dismountState().isEnabled()){
+        if (pState.dismountState().isEnabled()) {
             ((ModelPartChildren) leftLeg).resetPoseAndChildren();
             ((ModelPartChildren) rightLeg).resetPoseAndChildren();
             ((ModelPartChildren) leftArm).resetPoseOnlyChildren();
             ((ModelPartChildren) rightArm).resetPoseOnlyChildren();
 
-        }
-        else {
-            for (ModelPart part : bodyPartsResetMount) ((ModelPartChildren) part).resetPoseAndChildren();
-        }
+        } else for (ModelPart part : bodyPartsResetMount) ((ModelPartChildren) part).resetPoseAndChildren();
 /*        List<ModelPart> bParts=pState.dismountState().isEnabled() ? bodyPartsResetDismount : bodyPartsResetMount;
         for (ModelPart part : bParts) ((ModelPartChildren) part).resetPoseAndChildren();*/
 
@@ -137,11 +134,10 @@ public class PlayerModelMixin extends HumanoidModel<AvatarRenderState> {
             root.z *= off;
 
 
-            if (delta > dismountType.timeEndMoveY){
+            if (delta > dismountType.timeEndMoveY) {
                 root.y -= y * 16;
                 //root.yRot+=Math.toRadians(avatarRenderState.bodyRot - mState.getMountYaw());
-            }
-            else if (delta > dismountType.timeStartMoveY) {
+            } else if (delta > dismountType.timeStartMoveY) {
                 float v = (delta - dismountType.timeStartMoveY) * dismountType.timeScaleMoveY;
                 root.y -= y * v * 16;
                 //System.out.println(delta + " | " + v);
@@ -151,13 +147,10 @@ public class PlayerModelMixin extends HumanoidModel<AvatarRenderState> {
 
 
             float rOffset = Mth.wrapDegrees(avatarRenderState.bodyRot - mState.getMountYaw());
-            root.yRot+=Math.toRadians(rOffset *delta);
-
-
+            root.yRot += Math.toRadians(rOffset * delta);
 
 
         }
-
 
         Vector3f offset = new Vector3f(body.x, body.y, body.z);
         Vector3f offsetRot = new Vector3f(body.xRot, body.yRot, body.zRot);
@@ -167,10 +160,6 @@ public class PlayerModelMixin extends HumanoidModel<AvatarRenderState> {
             part.offsetRotation(offsetRot);
         }
         //57.29577951308232
-
-
-        /*float yaw = ((MountState) avatarRenderState).getMountYaw();
-        avatarRenderState.bodyRot=yaw;*/
 
 
     }

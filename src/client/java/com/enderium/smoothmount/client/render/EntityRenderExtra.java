@@ -5,4 +5,7 @@ public interface EntityRenderExtra {
     int getTick();
     float getDelta();
 
+    void setTick(int tick);
+    void setDelta(float delta);
+
 }
