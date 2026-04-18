@@ -1,7 +1,7 @@
 package com.enderium.smoothmount.mixin.client;
 
 import com.enderium.smoothmount.client.SmoothmountClient;
-import com.enderium.smoothmount.client.enity.VehicleTypes;
+import com.enderium.smoothmount.client.entity.VehicleTypes;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState.MountType;
 import com.enderium.smoothmount.client.util.CameraLerpUtils;
@@ -34,7 +34,6 @@ import java.util.Optional;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin implements MountState {
-
 
 
     @Shadow
@@ -79,7 +78,7 @@ public abstract class EntityMixin implements MountState {
         PlayerAnimationState state = (PlayerAnimationState) player;
         state.smoothMount$stopDismount();
 
-        if (VehicleTypes.isCorrectVehicle(entity)){
+        if (VehicleTypes.isCorrectVehicle(entity)) {
             float yR = Mth.wrapDegrees(player.getYRot() - entity.getYRot());
             if (Math.abs(yR) < 35) state.startMount(MountType.BACK, player.tickCount);
             else if (yR < 0) state.startMount(MountType.RIGHT, player.tickCount);
@@ -96,7 +95,7 @@ public abstract class EntityMixin implements MountState {
 
         Camera camera = instance.gameRenderer.getMainCamera();
         CameraModifier modifier = (CameraModifier) camera;
-        long time =  instance.options.getCameraType().isFirstPerson() ? 300 : 450;
+        long time = instance.options.getCameraType().isFirstPerson() ? 300 : 450;
         modifier.smoothMount$setSupplierPosition(CameraLerpUtils.smoothToPosition(modifier, modifier.smoothMount$lastPosition(), time));
         modifier.smoothMount$setSupplierRotation(CameraLerpUtils.smoothToRotation(modifier, new Quaternionf(modifier.smoothMount$lastRotation()), time));
 
@@ -112,15 +111,14 @@ public abstract class EntityMixin implements MountState {
         PlayerAnimationState state = (PlayerAnimationState) player;
         state.smoothMount$stopMount();
 
-        if (VehicleTypes.isCorrectVehicle(vehicle)){
+        if (VehicleTypes.isCorrectVehicle(vehicle)) {
             Vec3 pos = player.position();
-            Vec3 findPos = findPosition(vehicle,player);
-            float angleTo =(float) Math.toDegrees(Math.atan2(pos.z - findPos.z, pos.x - findPos.x))+90f;
-            float angleCross=Mth.wrapDegrees(player.yBodyRot-angleTo);
-            if (Math.abs(angleCross)<89){
+            Vec3 findPos = findPosition(vehicle, player);
+            float angleTo = (float) Math.toDegrees(Math.atan2(pos.z - findPos.z, pos.x - findPos.x)) + 90f;
+            float angleCross = Mth.wrapDegrees(player.yBodyRot - angleTo);
+            if (Math.abs(angleCross) < 89) {
                 state.startDismount(PlayerAnimationState.DismountType.FORWARD, player.tickCount);
-            }
-            else state.startDismount(PlayerAnimationState.DismountType.BACK, player.tickCount);
+            } else state.startDismount(PlayerAnimationState.DismountType.BACK, player.tickCount);
         }
 
         if (player != Minecraft.getInstance().player) return;
@@ -170,7 +168,7 @@ public abstract class EntityMixin implements MountState {
 
     @Override
     public void setLastVehicle(Entity vehicle) {
-        lastVehicle=new WeakReference<>(vehicle);
+        lastVehicle = new WeakReference<>(vehicle);
     }
 
     @Override
@@ -179,7 +177,7 @@ public abstract class EntityMixin implements MountState {
     }
 
     @Override
-    public Vec3 smoothMount$getVehicleAttachmentPoint(Entity entity){
+    public Vec3 smoothMount$getVehicleAttachmentPoint(Entity entity) {
         return getVehicleAttachmentPoint(entity);
     }
 
@@ -192,7 +190,7 @@ public abstract class EntityMixin implements MountState {
     }*/
 
     @Unique
-    private static Vec3 findPosition(Entity entity, LivingEntity self){
+    private static Vec3 findPosition(Entity entity, LivingEntity self) {
         Vec3 vec32;
         if (self.isRemoved()) {
             vec32 = self.position();
@@ -202,13 +200,13 @@ public abstract class EntityMixin implements MountState {
             vec32 = new Vec3(self.getX(), d, self.getZ());
             boolean bl2 = bl = self.getBbWidth() <= 4.0f && self.getBbHeight() <= 4.0f;
             if (bl) {
-                double e = (double)self.getBbHeight() / 2.0;
+                double e = (double) self.getBbHeight() / 2.0;
                 Vec3 vec322 = vec32.add(0.0, e, 0.0);
                 VoxelShape voxelShape = Shapes.create(AABB.ofSize(vec322, self.getBbWidth(), self.getBbHeight(), self.getBbWidth()));
                 vec32 = self.level().findFreePosition(self, voxelShape, vec322, self.getBbWidth(), self.getBbHeight(), self.getBbWidth()).map(vec3 -> vec3.add(0.0, -e, 0.0)).orElse(vec32);
             }
         } else {
-            vec32 = entity.getDismountLocationForPassenger((LivingEntity)(Object)self);
+            vec32 = entity.getDismountLocationForPassenger((LivingEntity) self);
         }
         return vec32;
     }

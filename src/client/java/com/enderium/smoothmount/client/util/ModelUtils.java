@@ -24,7 +24,7 @@ public class ModelUtils {
         return Optional.of(part);
     }
 
-    public static String toString(ModelPart part){
-        return format.format(part.x)+" "+format.format(part.y)+" "+format.format(part.z);
+    public static String toString(ModelPart part) {
+        return format.format(part.x) + " " + format.format(part.y) + " " + format.format(part.z);
     }
 }

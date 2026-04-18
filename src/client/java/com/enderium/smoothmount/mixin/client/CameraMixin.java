@@ -12,7 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
@@ -74,7 +77,7 @@ public abstract class CameraMixin implements CameraModifier {
         //this.rotation.set(rotation);
         //rotation.getEulerAnglesXYZ(eulerAngles);
         rotation.getEulerAnglesYXZ(eulerAngles);
-        setRotation(-(180+eulerAngles.y*57.29577951308232f),-eulerAngles.x*57.29577951308232f);
+        setRotation(-(180 + eulerAngles.y * 57.29577951308232f), -eulerAngles.x * 57.29577951308232f);
 
     }
 

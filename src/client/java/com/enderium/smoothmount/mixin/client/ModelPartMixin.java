@@ -26,7 +26,7 @@ public abstract class ModelPartMixin implements ModelPartChildren {
     public void resetPoseAndChildren() {
         resetPose();
         for (ModelPart value : children.values()) {
-            ((ModelPartChildren)value).resetPoseAndChildren();
+            ((ModelPartChildren) value).resetPoseAndChildren();
         }
     }
 }

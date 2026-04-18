@@ -20,7 +20,7 @@ public class CameraLerpUtils {
                 long time = System.nanoTime() - startTime;
                 if (time > endTimeLong) modifier.smoothMount$setSupplierPosition(null);
                 double d = time / endTimeFloat;
-                if (d>1)d=1;
+                if (d > 1) d = 1;
                 return startPos.lerp(modifier.smoothMount$lastPosition(), d).add(0, Math.sin(d * Math.PI) * 0.5, 0);
             }
         };

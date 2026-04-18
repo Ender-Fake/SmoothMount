@@ -9,39 +9,36 @@ public abstract class LerpCameraTimer {
     protected float lengthTime;
     protected float deltaTime;
 
-    public LerpCameraTimer(float lengthTime){
-        this.lengthTime=lengthTime;
+    public LerpCameraTimer(float lengthTime) {
+        this.lengthTime = lengthTime;
     }
 
 
-
-    public Vec3 lerpPosition(Vec3 end){
-        return lerpPosition(end,deltaTime);
+    public Vec3 lerpPosition(Vec3 end) {
+        return lerpPosition(end, deltaTime);
     }
 
     protected abstract Vec3 lerpPosition(Vec3 end, float delta);
 
-    public Quaternionf lerpRotation(Quaternionf end){
-        return lerpRotation(end,deltaTime);
+    public Quaternionf lerpRotation(Quaternionf end) {
+        return lerpRotation(end, deltaTime);
     }
 
     protected abstract Quaternionf lerpRotation(Quaternionf end, float delta);
 
 
-    public void increment(float delta){
-        if (lengthTime<=0){
-            deltaTime=1;
+    public void increment(float delta) {
+        if (lengthTime <= 0) {
+            deltaTime = 1;
             return;
         }
-        time+=delta;
-        deltaTime=time/lengthTime;
+        time += delta;
+        deltaTime = time / lengthTime;
     }
 
 
-
-
-    public static float ofSeconds(float ticks){
-        return ticks*20;
+    public static float ofSeconds(float ticks) {
+        return ticks * 20;
     }
 
 }

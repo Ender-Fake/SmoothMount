@@ -15,8 +15,8 @@ public interface MountState {
 
     void setLastPosition(Vec3 vec);
 
-    default void setLastPosition(double x, double y, double z){
-        setLastPosition(new Vec3(x,y,z));
+    default void setLastPosition(double x, double y, double z) {
+        setLastPosition(new Vec3(x, y, z));
     }
 
     float getMountYaw();
@@ -27,7 +27,7 @@ public interface MountState {
 
     void setLastVehicle(Entity vehicle);
 
-    default Vec3 getVehiclePos(float d){
+    default Vec3 getVehiclePos(float d) {
         Optional<Entity> vehicle = getLastVehicle();
         return vehicle.map(entity -> entity.getPosition(d)).orElse(Vec3.ZERO);
     }

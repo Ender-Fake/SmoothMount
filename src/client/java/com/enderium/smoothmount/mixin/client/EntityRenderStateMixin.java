@@ -25,12 +25,12 @@ public class EntityRenderStateMixin implements EntityRenderExtra {
 
     @Override
     public void setTick(int tick) {
-        this.tick=tick;
+        this.tick = tick;
     }
 
     @Override
     public void setDelta(float delta) {
-        this.delta=delta;
+        this.delta = delta;
     }
 
 }

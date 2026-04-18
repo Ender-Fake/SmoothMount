@@ -10,15 +10,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityRenderer.class)
-public class EntityRendererMixin  {
+public class EntityRendererMixin {
 
     @Inject(method = "extractRenderState", at = @At("HEAD"))
-    public void extractExtra(Entity entity, EntityRenderState entityRenderState, float f, CallbackInfo ci){
+    public void extractExtra(Entity entity, EntityRenderState entityRenderState, float f, CallbackInfo ci) {
         EntityRenderExtra state = (EntityRenderExtra) entityRenderState;
         state.setTick(entity.tickCount);
         state.setDelta(f);
     }
-
 
 
 }

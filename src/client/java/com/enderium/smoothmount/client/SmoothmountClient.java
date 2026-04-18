@@ -8,10 +8,9 @@ import net.minecraft.world.phys.Vec3;
 public class SmoothmountClient implements ClientModInitializer {
     private static SmoothmountClient instance;
 
-    public SmoothmountClient(){
-        instance=this;
+    public SmoothmountClient() {
+        instance = this;
     }
-
 
 
     @Override
@@ -20,7 +19,7 @@ public class SmoothmountClient implements ClientModInitializer {
         //EntityRenderDispatcher
         ClientTickEvents.END_CLIENT_TICK.register(this::onEndTick);
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
-            if (client.player==null)return;
+            if (client.player == null) return;
             lastPlayerPosStart = client.player.position();
 
         });
@@ -31,7 +30,7 @@ public class SmoothmountClient implements ClientModInitializer {
     private Vec3 lastPlayerPosStart;
 
     private void onEndTick(Minecraft client) {
-        if (client.player==null)return;
+        if (client.player == null) return;
         lastPlayerPos = client.player.oldPosition();
 
     }
