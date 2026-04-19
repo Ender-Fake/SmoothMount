@@ -1,14 +1,17 @@
 package com.enderium.smoothmount.client.model.animation.entity;
 
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.world.entity.AnimationState;
+import com.enderium.smoothmount.client.animation.AnimationPack;
+import com.enderium.smoothmount.client.animation.definition.EntityAnimationDefinition;
+import com.enderium.smoothmount.client.animation.definition.ModelAnimationDefinition;
+import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimation.Mount;
 import org.jetbrains.annotations.NotNull;
-
-import static com.enderium.smoothmount.client.model.animation.entity.AnimationData.timeout;
 
 public interface PlayerAnimationState extends AnimationData {
 
-    AnimationState mountAnimation();
+    AnimationPack mountAnimation();
+
+    void mountAnimation(AnimationPack pack);
+
 
     MountType mountState();
 
@@ -16,12 +19,8 @@ public interface PlayerAnimationState extends AnimationData {
 
     default void startMount(@NotNull MountType type, int ticks) {
         mountState(type);
-        mountAnimation().start(ticks);
+        mountAnimation().state().start(ticks);
     }
-
-
-    AnimationState dismountAnimation();
-
 
     DismountType dismountState();
 
@@ -29,49 +28,56 @@ public interface PlayerAnimationState extends AnimationData {
 
     default void startDismount(@NotNull DismountType type, int ticks) {
         dismountState(type);
-        dismountAnimation().start(ticks);
+        dismountAnimation().state().start(ticks);
     }
+
+    AnimationPack dismountAnimation();
+
+    void dismountAnimation(AnimationPack pack);
+
 
     default void smoothMount$stopMount() {
         mountState(MountType.DISABLE);
+        mountAnimation().state().stop();
     }
 
     default void smoothMount$stopDismount() {
         dismountState(DismountType.DISABLE);
+        dismountAnimation().state().stop();
     }
 
     default boolean smoothMount$IsStopped() {
-        return !(mountState().isEnabled() || dismountState().isEnabled());
+        return !(mountAnimation().isStarted() || dismountAnimation().isStarted());
     }
 
     default void smoothMount$checkAndStop(float time) {
-        if (mountState().isEnabled() && timeout(time, mountAnimation(), mountState().animation))
-            mountState(MountType.DISABLE);
-        if (dismountState().isEnabled() && timeout(time, dismountAnimation(), dismountState().animation))
-            dismountState(DismountType.DISABLE);
+        if (mountAnimation().isStopped()) mountState(MountType.DISABLE);
+        if (dismountAnimation().isStopped()) dismountState(DismountType.DISABLE);
 
     }
 
     default void smoothMount$copyFrom(PlayerAnimationState state) {
-        mountAnimation().copyFrom(state.mountAnimation());
         mountState(state.mountState());
+        mountAnimation(state.mountAnimation());
 
-        dismountAnimation().copyFrom(state.dismountAnimation());
         dismountState(state.dismountState());
+        dismountAnimation(state.dismountAnimation());
 
     }
 
 
     enum MountType {
-        DISABLE(null),
-        BACK(PlayerAnimation.MOUNT_BACK),
-        LEFT(PlayerAnimation.MOUNT_LEFT),
-        RIGHT(PlayerAnimation.MOUNT_RIGHT);
+        DISABLE(null, null),
+        BACK(Mount.MOUNT_BACK_M, Mount.MOUNT_BACK_E),
+        LEFT(Mount.MOUNT_LEFT_M, Mount.MOUNT_LEFT_E),
+        RIGHT(Mount.MOUNT_RIGHT_M, Mount.MOUNT_RIGHT_E);
 
-        public final AnimationDefinition animation;
+        public final ModelAnimationDefinition animationModel;
+        public final EntityAnimationDefinition animationEntity;
 
-        MountType(AnimationDefinition definition) {
-            this.animation = definition;
+        MountType(ModelAnimationDefinition animationModel, EntityAnimationDefinition animationEntity) {
+            this.animationModel = animationModel;
+            this.animationEntity = animationEntity;
         }
 
         public boolean isDisable() {
@@ -86,35 +92,25 @@ public interface PlayerAnimationState extends AnimationData {
 
     enum DismountType {
         DISABLE,
-        BACK(PlayerAnimation.DISMOUNT_BACK, 0, -1, 0.1667F, 0.4167F),
-        FORWARD(PlayerAnimation.DISMOUNT_FORWARD, 180, 1, 0.1667F, 0.4167F);
+        BACK(PlayerAnimation.Dismount.DISMOUNT_BACK_M, PlayerAnimation.Dismount.DISMOUNT_BACK_E, 0),
+        FORWARD(PlayerAnimation.Dismount.DISMOUNT_FORWARD_M, PlayerAnimation.Dismount.DISMOUNT_FORWARD_E, 180);
         //LEFT(PlayerAnimation.MOUNT_LEFT),
         //RIGHT(PlayerAnimation.MOUNT_RIGHT);
 
-        public final AnimationDefinition animation;
+        public final ModelAnimationDefinition animationModel;
+        public final EntityAnimationDefinition animationEntity;
         public final float yawOffset;
-        public final float zOffset;
-        public final float timeStartMoveY;
-        public final float timeEndMoveY;
-        public final float timeScaleMoveY;
 
         DismountType() {
-            animation = null;
+            animationModel = null;
+            animationEntity = null;
             yawOffset = 0;
-            zOffset = 0;
-            timeStartMoveY = 0;
-            timeEndMoveY = 1;
-            timeScaleMoveY = 1;
         }
 
-        DismountType(AnimationDefinition definition, float yawOffset, float zOffset, float timeStartMoveY, float timeEndMoveY) {
-            this.animation = definition;
+        DismountType(ModelAnimationDefinition definitionM, EntityAnimationDefinition definitionE, float yawOffset) {
+            this.animationModel = definitionM;
+            this.animationEntity = definitionE;
             this.yawOffset = yawOffset;
-            this.zOffset = zOffset;
-            this.timeStartMoveY = timeStartMoveY;
-            this.timeEndMoveY = timeEndMoveY;
-            float range = timeEndMoveY - timeStartMoveY;
-            this.timeScaleMoveY = range == 0 ? 0 : 1 / range;
         }
 
         public boolean isDisable() {

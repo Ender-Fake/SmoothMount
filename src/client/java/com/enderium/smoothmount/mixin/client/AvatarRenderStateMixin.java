@@ -1,9 +1,9 @@
 package com.enderium.smoothmount.mixin.client;
 
+import com.enderium.smoothmount.client.animation.AnimationPack;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState;
 import com.enderium.smoothmount.state.MountState;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -27,13 +27,13 @@ public class AvatarRenderStateMixin implements MountState, PlayerAnimationState 
     private MountType mountType = MountType.DISABLE;
 
     @Unique
-    private AnimationState mountAnimation = new AnimationState();
-
-    @Unique
     private DismountType dismountType = DismountType.DISABLE;
 
     @Unique
-    private AnimationState dismountAnimation = new AnimationState();
+    private AnimationPack mountAnimation;
+
+    @Unique
+    private AnimationPack dismountAnimation;
 
 
     @Unique
@@ -46,7 +46,7 @@ public class AvatarRenderStateMixin implements MountState, PlayerAnimationState 
 
     @Override
     public void setPlayerPos(Vec3 vec) {
-        playerPos=vec;
+        playerPos = vec;
     }
 
     @Override
@@ -82,13 +82,23 @@ public class AvatarRenderStateMixin implements MountState, PlayerAnimationState 
     @Override
     public Vec3 smoothMount$getPassengerAttachmentPoint(Entity entity, float d) {
         Optional<Entity> vehicle = getLastVehicle();
-        return vehicle.isPresent() ? ((MountState)vehicle.get()).smoothMount$getPassengerAttachmentPoint(entity, d) : Vec3.ZERO;
+        return vehicle.isPresent() ? ((MountState) vehicle.get()).smoothMount$getPassengerAttachmentPoint(entity, d) : Vec3.ZERO;
     }
 
     @Override
-    public Vec3 smoothMount$getVehicleAttachmentPoint(Entity entity){
+    public Vec3 smoothMount$getVehicleAttachmentPoint(Entity entity) {
         Optional<Entity> vehicle = getLastVehicle();
-        return vehicle.isPresent() ? ((MountState)vehicle.get()).smoothMount$getVehicleAttachmentPoint(entity) : Vec3.ZERO;
+        return vehicle.isPresent() ? ((MountState) vehicle.get()).smoothMount$getVehicleAttachmentPoint(entity) : Vec3.ZERO;
+    }
+
+    @Override
+    public AnimationPack mountAnimation() {
+        return mountAnimation;
+    }
+
+    @Override
+    public void mountAnimation(AnimationPack pack) {
+        mountAnimation = pack;
     }
 
     @Override
@@ -101,10 +111,6 @@ public class AvatarRenderStateMixin implements MountState, PlayerAnimationState 
         mountType = type;
     }
 
-    @Override
-    public AnimationState mountAnimation() {
-        return mountAnimation;
-    }
 
     @Override
     public DismountType dismountState() {
@@ -117,7 +123,13 @@ public class AvatarRenderStateMixin implements MountState, PlayerAnimationState 
     }
 
     @Override
-    public AnimationState dismountAnimation() {
+    public AnimationPack dismountAnimation() {
         return dismountAnimation;
     }
+
+    @Override
+    public void dismountAnimation(AnimationPack pack) {
+        dismountAnimation = pack;
+    }
+
 }

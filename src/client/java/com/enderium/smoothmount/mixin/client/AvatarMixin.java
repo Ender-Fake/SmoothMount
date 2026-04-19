@@ -1,26 +1,55 @@
 package com.enderium.smoothmount.mixin.client;
 
+import com.enderium.smoothmount.client.animation.AnimationPack;
+import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimation.Dismount;
+import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimation.Mount;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Avatar;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 
 @Mixin(Avatar.class)
 public class AvatarMixin implements PlayerAnimationState {
 
     @Unique
-    private MountType mountType = MountType.DISABLE;
+    private MountType mountType;
 
     @Unique
-    private AnimationState mountAnimation = new AnimationState();
+    private AnimationPack mountAnimation;
 
     @Unique
-    private DismountType dismountType = DismountType.DISABLE;
+    private DismountType dismountType;
 
     @Unique
-    private AnimationState dismountAnimation = new AnimationState();
+    private AnimationPack dismountAnimation;
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    public void initFields(EntityType entityType, Level level, CallbackInfo ci) {
+        mountType = MountType.DISABLE;
+        mountAnimation = AnimationPack.of(Mount.MOUNT_BACK_M, Mount.MOUNT_RIGHT_M, Mount.MOUNT_LEFT_M, Mount.MOUNT_BACK_E, Mount.MOUNT_RIGHT_E, Mount.MOUNT_LEFT_E);
+
+        dismountType = DismountType.DISABLE;
+        dismountAnimation = AnimationPack.of(Dismount.DISMOUNT_BACK_M, Dismount.DISMOUNT_FORWARD_M, Dismount.DISMOUNT_BACK_E, Dismount.DISMOUNT_FORWARD_E);
+
+    }
+
+
+    @Override
+    public AnimationPack mountAnimation() {
+        return mountAnimation;
+    }
+
+    @Override
+    public void mountAnimation(AnimationPack pack) {
+
+    }
 
     @Override
     public MountType mountState() {
@@ -32,10 +61,6 @@ public class AvatarMixin implements PlayerAnimationState {
         this.mountType = type;
     }
 
-    @Override
-    public AnimationState mountAnimation() {
-        return mountAnimation;
-    }
 
     @Override
     public DismountType dismountState() {
@@ -48,7 +73,12 @@ public class AvatarMixin implements PlayerAnimationState {
     }
 
     @Override
-    public AnimationState dismountAnimation() {
+    public AnimationPack dismountAnimation() {
         return dismountAnimation;
+    }
+
+    @Override
+    public void dismountAnimation(AnimationPack pack) {
+
     }
 }
