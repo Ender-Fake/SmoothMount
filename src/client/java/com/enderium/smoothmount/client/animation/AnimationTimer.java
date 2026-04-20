@@ -2,7 +2,7 @@ package com.enderium.smoothmount.client.animation;
 
 import com.enderium.smoothmount.client.animation.definition.AnimationDefinition;
 
-public class AnimationState {
+public class AnimationTimer {
     private static final int STOPPED = Integer.MIN_VALUE;
     private int startTick = STOPPED;
 
