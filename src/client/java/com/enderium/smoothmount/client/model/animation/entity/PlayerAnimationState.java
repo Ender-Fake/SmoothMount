@@ -6,7 +6,7 @@ import com.enderium.smoothmount.client.animation.definition.ModelAnimationDefini
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimation.Mount;
 import org.jetbrains.annotations.NotNull;
 
-public interface PlayerAnimationState extends AnimationData {
+public interface PlayerAnimationState {
 
     AnimationPack mountAnimation();
 
