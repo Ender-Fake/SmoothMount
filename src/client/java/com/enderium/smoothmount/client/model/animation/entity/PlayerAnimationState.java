@@ -47,7 +47,10 @@ public interface PlayerAnimationState {
     }
 
     default boolean smoothMount$IsStopped() {
-        return !(mountAnimation().isStarted() || dismountAnimation().isStarted());
+        // no animation pack = nothing playing; matches the idle-player branch
+        AnimationPack mount = mountAnimation();
+        AnimationPack dismount = dismountAnimation();
+        return (mount == null || !mount.isStarted()) && (dismount == null || !dismount.isStarted());
     }
 
     default void smoothMount$checkAndStop(float time) {

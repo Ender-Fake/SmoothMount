@@ -1,6 +1,8 @@
 package com.enderium.smoothmount.mixin.client;
 
 import com.enderium.smoothmount.client.animation.AnimationPack;
+import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimation.Dismount;
+import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimation.Mount;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState;
 import com.enderium.smoothmount.state.MountState;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
@@ -29,11 +31,13 @@ public class AvatarRenderStateMixin implements MountState, PlayerAnimationState 
     @Unique
     private DismountType dismountType = DismountType.DISABLE;
 
+    // initialized like AvatarMixin#initFields — a render state can reach the model before
+    // smoothMount$copyFrom runs (e.g. Iris shadow pass), so null here crashes setupAnim
     @Unique
-    private AnimationPack mountAnimation;
+    private AnimationPack mountAnimation = AnimationPack.of(Mount.MOUNT_BACK_M, Mount.MOUNT_RIGHT_M, Mount.MOUNT_LEFT_M, Mount.MOUNT_BACK_E, Mount.MOUNT_RIGHT_E, Mount.MOUNT_LEFT_E);
 
     @Unique
-    private AnimationPack dismountAnimation;
+    private AnimationPack dismountAnimation = AnimationPack.of(Dismount.DISMOUNT_BACK_M, Dismount.DISMOUNT_FORWARD_M, Dismount.DISMOUNT_BACK_E, Dismount.DISMOUNT_FORWARD_E);
 
 
     @Unique
