@@ -1,12 +1,12 @@
 package com.enderium.smoothmount.mixin.client;
 
 import com.enderium.smoothmount.client.animation.AnimationPack;
+import com.enderium.smoothmount.client.model.animation.entity.AnimationType;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState;
 import com.enderium.smoothmount.state.MountState;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -24,17 +24,16 @@ public class AvatarRenderStateMixin implements MountState, PlayerAnimationState 
     private float mountYaw;
 
     @Unique
-    private MountType mountType = MountType.DISABLE;
+    private AnimationPack animationPack;
 
     @Unique
-    private DismountType dismountType = DismountType.DISABLE;
+    private AnimationType animationType;
 
     @Unique
-    private AnimationPack mountAnimation;
+    private AnimationState animationState;
 
     @Unique
-    private AnimationPack dismountAnimation;
-
+    private int animationIndex;
 
     @Unique
     private WeakReference<Entity> lastMount = new WeakReference<>(null);
@@ -92,44 +91,44 @@ public class AvatarRenderStateMixin implements MountState, PlayerAnimationState 
     }
 
     @Override
-    public AnimationPack mountAnimation() {
-        return mountAnimation;
+    public AnimationType animationType() {
+        return animationType;
     }
 
     @Override
-    public void mountAnimation(AnimationPack pack) {
-        mountAnimation = pack;
+    public void animationType(AnimationType type) {
+        animationType = type;
     }
 
     @Override
-    public MountType mountState() {
-        return mountType;
+    public void setIndex(int state) {
+        animationIndex = state;
     }
 
     @Override
-    public void mountState(@NotNull MountType type) {
-        mountType = type;
-    }
-
-
-    @Override
-    public DismountType dismountState() {
-        return dismountType;
+    public int getIndex() {
+        return animationIndex;
     }
 
     @Override
-    public void dismountState(@NotNull DismountType type) {
-        dismountType = type;
+    public AnimationState state() {
+        return animationState;
     }
 
     @Override
-    public AnimationPack dismountAnimation() {
-        return dismountAnimation;
+    public void state(AnimationState state) {
+        animationState=state;
     }
 
     @Override
-    public void dismountAnimation(AnimationPack pack) {
-        dismountAnimation = pack;
+    public AnimationPack animationPack() {
+        return animationPack;
     }
+
+    @Override
+    public void animationPack(AnimationPack pack) {
+        animationPack = pack;
+    }
+
 
 }

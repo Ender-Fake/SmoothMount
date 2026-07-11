@@ -1,9 +1,10 @@
 package com.enderium.smoothmount.mixin.client;
 
 
+import com.enderium.smoothmount.client.animation.AnimationPack;
 import com.enderium.smoothmount.client.animation.definition.ModelAnimation;
 import com.enderium.smoothmount.client.model.ModelPartChildren;
-import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimation;
+import com.enderium.smoothmount.client.model.animation.entity.AnimationType;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState;
 import com.enderium.smoothmount.compat.OtherRenderPart;
 import net.minecraft.client.model.HumanoidModel;
@@ -18,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Debug(export = true)
@@ -25,16 +27,7 @@ import java.util.List;
 public class PlayerModelMixin extends HumanoidModel<AvatarRenderState> {
 
     @Unique
-    private ModelAnimation mountBackAnimation;
-    @Unique
-    private ModelAnimation mountRightAnimation;
-    @Unique
-    private ModelAnimation mountLeftAnimation;
-
-    @Unique
-    private ModelAnimation dismountBackAnimation;
-    @Unique
-    private ModelAnimation dismountForwardAnimation;
+    private Entry[] animations;
 
     @Unique
     private final List<ModelPart> bodyParts = List.of(leftLeg, rightLeg, leftArm, rightArm, head);
@@ -52,11 +45,7 @@ public class PlayerModelMixin extends HumanoidModel<AvatarRenderState> {
     @Inject(method = "<init>", at = @At("TAIL"))
     public void init(ModelPart modelPart, boolean bl, CallbackInfo ci) {
 
-        mountBackAnimation = PlayerAnimation.Mount.MOUNT_BACK_M.bake(modelPart);
-        mountRightAnimation = PlayerAnimation.Mount.MOUNT_RIGHT_M.bake(modelPart);
-        mountLeftAnimation = PlayerAnimation.Mount.MOUNT_LEFT_M.bake(modelPart);
-        dismountBackAnimation = PlayerAnimation.Dismount.DISMOUNT_BACK_M.bake(modelPart);
-        dismountForwardAnimation = PlayerAnimation.Dismount.DISMOUNT_FORWARD_M.bake(modelPart);
+        animations = Arrays.stream(AnimationType.ANIMATIONS_M).map(e -> new Entry(e.bake(modelPart), AnimationType.INDEX_ANIMATION.getInt(e))).toArray(Entry[]::new);
 
     }
 
@@ -74,37 +63,26 @@ public class PlayerModelMixin extends HumanoidModel<AvatarRenderState> {
         if (root instanceof OtherRenderPart part) part.enableVanilla(!b);
         if (b) return;
 
+        AnimationPack pack = pState.animationPack();
 
-        if (pState.dismountAnimation().isStarted()) {
-            ((ModelPartChildren) leftLeg).resetPoseAndChildren();
+        if (pack.isStarted()) {
+/*            ((ModelPartChildren) leftLeg).resetPoseAndChildren();
             ((ModelPartChildren) rightLeg).resetPoseAndChildren();
             ((ModelPartChildren) leftArm).resetPoseOnlyChildren();
-            ((ModelPartChildren) rightArm).resetPoseOnlyChildren();
+            ((ModelPartChildren) rightArm).resetPoseOnlyChildren();*/
 
-        } else for (ModelPart part : bodyPartsResetMount) ((ModelPartChildren) part).resetPoseAndChildren();
-/*        List<ModelPart> bParts=pState.dismountState().isEnabled() ? bodyPartsResetDismount : bodyPartsResetMount;
-        for (ModelPart part : bParts) ((ModelPartChildren) part).resetPoseAndChildren();*/
+            for (ModelPart part : bodyPartsResetMount) ((ModelPartChildren) part).resetPoseAndChildren();
+
+        }
 
         float ageInTicks = avatarRenderState.ageInTicks;
 
-        if (pState.mountState().isEnabled()) {
+        if (pack.isStarted()&&pState.getIndex()!=-1) {
+            Entry entry = animations[pState.getIndex()];
+            if (pState.state()== PlayerAnimationState.AnimationState.MOUNT)
+                pack.update(entry.index(), entry.animation(), ageInTicks);
+            else pack.update(entry.index(), entry.animation(), ageInTicks, 1.2f);
 
-            switch (pState.mountState()) {
-                case BACK -> pState.mountAnimation().update(0, mountBackAnimation, ageInTicks);
-                case LEFT -> pState.mountAnimation().update(2, mountLeftAnimation, ageInTicks);
-                case RIGHT -> pState.mountAnimation().update(1, mountRightAnimation, ageInTicks);
-                default -> throw new IllegalStateException("Unexpected value: " + pState.mountState());
-            }
-        }
-
-        if (pState.dismountState().isEnabled()) {
-            PlayerAnimationState.DismountType dismountType = pState.dismountState();
-
-            switch (dismountType) {
-                case BACK -> pState.dismountAnimation().update(0, dismountBackAnimation, ageInTicks, 1.2f);
-                case FORWARD -> pState.dismountAnimation().update(1, dismountForwardAnimation, ageInTicks, 1.2f);
-                default -> throw new IllegalStateException("Unexpected value: " + dismountType);
-            }
         }
 
         Vector3f offset = new Vector3f(body.x, body.y, body.z);
@@ -118,5 +96,7 @@ public class PlayerModelMixin extends HumanoidModel<AvatarRenderState> {
 
 
     }
+
+    public record Entry(ModelAnimation animation, int index){}
 
 }

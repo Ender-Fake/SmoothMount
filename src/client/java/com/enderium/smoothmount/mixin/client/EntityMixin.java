@@ -1,16 +1,16 @@
 package com.enderium.smoothmount.mixin.client;
 
 import com.enderium.smoothmount.client.SmoothmountClient;
+import com.enderium.smoothmount.client.entity.EntityContext;
 import com.enderium.smoothmount.client.entity.VehicleTypes;
+import com.enderium.smoothmount.client.model.animation.entity.AnimationType;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState;
-import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState.MountType;
 import com.enderium.smoothmount.client.util.CameraLerpUtils;
 import com.enderium.smoothmount.state.CameraModifier;
 import com.enderium.smoothmount.state.MountState;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,7 +33,7 @@ import java.lang.ref.WeakReference;
 import java.util.Optional;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements MountState {
+public abstract class EntityMixin implements MountState, EntityContext {
 
 
     @Shadow
@@ -62,6 +62,16 @@ public abstract class EntityMixin implements MountState {
     @Shadow
     public abstract Vec3 getPosition(float f);
 
+    @Shadow
+    private Vec3 position;
+    @Shadow
+    private float xRot;
+    @Shadow
+    public int tickCount;
+
+    @Shadow
+    public abstract float getYRot();
+
     @Unique
     private Vec3 lastMountPos = Vec3.ZERO;
 
@@ -78,11 +88,11 @@ public abstract class EntityMixin implements MountState {
         PlayerAnimationState state = (PlayerAnimationState) player;
         state.smoothMount$stopDismount();
 
-        if (VehicleTypes.isCorrectVehicle(entity)) {
-            float yR = Mth.wrapDegrees(player.getYRot() - entity.getYRot());
-            if (Math.abs(yR) < 35) state.startMount(MountType.BACK, player.tickCount);
-            else if (yR < 0) state.startMount(MountType.RIGHT, player.tickCount);
-            else state.startMount(MountType.LEFT, player.tickCount);
+        AnimationType type = VehicleTypes.getType(entity);
+        state.animationType(type);
+        if (type!=null) {
+            state.state(PlayerAnimationState.AnimationState.MOUNT);
+            state.animationType().mount(state, (EntityContext) player, (EntityContext) entity);
         }
 
         Minecraft instance = Minecraft.getInstance();
@@ -111,14 +121,11 @@ public abstract class EntityMixin implements MountState {
         PlayerAnimationState state = (PlayerAnimationState) player;
         state.smoothMount$stopMount();
 
-        if (VehicleTypes.isCorrectVehicle(vehicle)) {
-            Vec3 pos = player.position();
+        AnimationType type = state.animationType();
+        if (type!=null) {
             Vec3 findPos = findPosition(vehicle, player);
-            float angleTo = (float) Math.toDegrees(Math.atan2(pos.z - findPos.z, pos.x - findPos.x)) + 90f;
-            float angleCross = Mth.wrapDegrees(player.yBodyRot - angleTo);
-            if (Math.abs(angleCross) < 89) {
-                state.startDismount(PlayerAnimationState.DismountType.FORWARD, player.tickCount);
-            } else state.startDismount(PlayerAnimationState.DismountType.BACK, player.tickCount);
+            state.state(PlayerAnimationState.AnimationState.DISMOUNT);
+            type.dismount(state, (EntityContext) player, (EntityContext) vehicle, findPos);
         }
 
         if (player != Minecraft.getInstance().player) return;
@@ -191,25 +198,43 @@ public abstract class EntityMixin implements MountState {
 
     @Unique
     private static Vec3 findPosition(Entity entity, LivingEntity self) {
-        Vec3 vec32;
-        if (self.isRemoved()) {
-            vec32 = self.position();
-        } else if (entity.isRemoved() || self.level().getBlockState(entity.blockPosition()).is(BlockTags.PORTALS)) {
-            boolean bl;
+        if (self.isRemoved()) return self.position();
+        if (entity.isRemoved() || self.level().getBlockState(entity.blockPosition()).is(BlockTags.PORTALS)) {
             double d = Math.max(self.getY(), entity.getY());
-            vec32 = new Vec3(self.getX(), d, self.getZ());
-            boolean bl2 = bl = self.getBbWidth() <= 4.0f && self.getBbHeight() <= 4.0f;
-            if (bl) {
+            Vec3 vec32 = new Vec3(self.getX(), d, self.getZ());
+            if (self.getBbWidth() <= 4.0f && self.getBbHeight() <= 4.0f) {
                 double e = (double) self.getBbHeight() / 2.0;
                 Vec3 vec322 = vec32.add(0.0, e, 0.0);
                 VoxelShape voxelShape = Shapes.create(AABB.ofSize(vec322, self.getBbWidth(), self.getBbHeight(), self.getBbWidth()));
                 vec32 = self.level().findFreePosition(self, voxelShape, vec322, self.getBbWidth(), self.getBbHeight(), self.getBbWidth()).map(vec3 -> vec3.add(0.0, -e, 0.0)).orElse(vec32);
             }
-        } else {
-            vec32 = entity.getDismountLocationForPassenger((LivingEntity) self);
+            return vec32;
         }
-        return vec32;
+        return entity.getDismountLocationForPassenger(self);
     }
 
+    @Override
+    public int tickCount() {
+        return tickCount;
+    }
 
+    @Override
+    public Vec3 getPos() {
+        return position;
+    }
+
+    @Override
+    public float yBodyRot() {
+        return yRot();
+    }
+
+    @Override
+    public float yRot() {
+        return yRot;
+    }
+
+    @Override
+    public float xRot() {
+        return xRot;
+    }
 }

@@ -10,4 +10,8 @@ public record TransformTrack(VectorTrack position, VectorTrack rotation, VectorT
     public int getIndexCount() {
         return 3;
     }
+
+
+    public static final TransformTrack EMPTY = new TransformTrack(VectorTrack.empty(),VectorTrack.empty(),VectorTrack.empty());
+
 }

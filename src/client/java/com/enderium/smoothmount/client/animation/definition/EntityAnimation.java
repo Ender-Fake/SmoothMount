@@ -1,8 +1,6 @@
 package com.enderium.smoothmount.client.animation.definition;
 
 import com.enderium.smoothmount.client.animation.TransformChannel;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +16,7 @@ public class EntityAnimation implements AnimationChannel {
         this.definition = definition;
         this.channelMap = channelMap;
 
-        offsetTransform = channelMap.get("o_transform");
+        offsetTransform = channelMap.getOrDefault("o_transform", TransformChannel.EMPTY);
 
     }
 

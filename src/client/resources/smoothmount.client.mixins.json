@@ -9,6 +9,7 @@
     "AvatarRenderStateMixin",
     "CameraMixin",
     "EntityMixin",
+    "LivingEntityMixin",
     "EntityRendererMixin",
     "EntityRenderStateMixin",
     "ModelPartMixin",

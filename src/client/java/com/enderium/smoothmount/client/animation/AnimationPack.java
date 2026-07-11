@@ -23,8 +23,12 @@ public record AnimationPack(AnimationTimer state, IndexInstance sharedIndices, A
         return new AnimationPack(state, sharedIndices, instances);
     }
 
+    public void clear(int i){
+        pack[i].clear();
+    }
+
     public void start(int i, int ticks) {
-        pack[i].start();
+        pack[i].clear();
         state.start(ticks);
     }
 

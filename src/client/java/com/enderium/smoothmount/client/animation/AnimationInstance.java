@@ -10,7 +10,7 @@ public record AnimationInstance(IndexInstance sharedIndices, int offset, int len
         return new AnimationInstance(indices, 0, indices.length, timeState);
     }
 
-    public void start() {
+    public void clear() {
         sharedIndices.clearRange(offset, length);
     }
 

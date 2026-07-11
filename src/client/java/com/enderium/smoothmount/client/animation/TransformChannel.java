@@ -29,5 +29,6 @@ public record TransformChannel(TransformTrack track, VectorChannel position, Vec
         return scale.currentValue;
     }
 
+    public static TransformChannel EMPTY = TransformTrack.EMPTY.createChannel();
 
 }
