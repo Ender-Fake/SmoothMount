@@ -20,6 +20,9 @@ public interface PlayerAnimationState {
 
     void state(AnimationState state);
 
+    AnimationContext getContext();
+
+    void setContext(AnimationContext context);
 
     default void smoothMount$stopMount() {
         animationPack().state().stop();
@@ -42,6 +45,7 @@ public interface PlayerAnimationState {
         animationType(state.animationType());
         setIndex(state.getIndex());
         state(state.state());
+        setContext(state.getContext());
     }
 
 

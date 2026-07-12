@@ -12,6 +12,6 @@ public record TransformTrack(VectorTrack position, VectorTrack rotation, VectorT
     }
 
 
-    public static final TransformTrack EMPTY = new TransformTrack(VectorTrack.empty(),VectorTrack.empty(),VectorTrack.empty());
+    public static final TransformTrack EMPTY = new TransformTrack(VectorTrack.empty(), VectorTrack.empty(), VectorTrack.empty());
 
 }

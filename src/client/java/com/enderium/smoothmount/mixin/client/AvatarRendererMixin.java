@@ -2,6 +2,7 @@ package com.enderium.smoothmount.mixin.client;
 
 import com.enderium.smoothmount.client.animation.TransformChannel;
 import com.enderium.smoothmount.client.animation.definition.EntityAnimation;
+import com.enderium.smoothmount.client.model.animation.entity.AnimationContext;
 import com.enderium.smoothmount.client.model.animation.entity.AnimationType;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState;
 import com.enderium.smoothmount.state.MountState;
@@ -35,7 +36,7 @@ public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarE
     @Inject(method = "<init>", at = @At("TAIL"))
     public void init(EntityRendererProvider.Context context, boolean bl, CallbackInfo ci) {
 
-        animations = Arrays.stream(AnimationType.ANIMATIONS_E).map(e -> new Entry(e.bake(),AnimationType.INDEX_ANIMATION.getInt(e))).toArray(Entry[]::new);
+        animations = Arrays.stream(AnimationType.ANIMATIONS_E).map(e -> new Entry(e.bake(), AnimationType.INDEX_ANIMATION.getInt(e))).toArray(Entry[]::new);
 
     }
 
@@ -59,19 +60,19 @@ public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarE
         playerState.smoothMount$checkAndStop();
         pState.smoothMount$copyFrom(playerState);
 
+        AnimationContext context = pState.getContext();
 
         Vector3f rotateOffset = new Vector3f();
 
-        if (playerState.animationPack().isStarted()&&playerState.getIndex()!=-1) {
+        if (playerState.animationPack().isStarted() && playerState.getIndex() != -1) {
             Entry entry = animations[playerState.getIndex()];
             EntityAnimation animation = entry.animation();
-            if (pState.state() == PlayerAnimationState.AnimationState.MOUNT){
-                pState.animationPack().update(entry.index(),animation,ageInTicks);
+            if (pState.state() == PlayerAnimationState.AnimationState.MOUNT) {
+                pState.animationPack().update(entry.index(), animation, ageInTicks, context.timeScale());
                 TransformChannel channel = animation.offsetTransform();
                 channel.position().currentValue.div(16, rotateOffset).rotateY(org.joml.Math.toRadians(state.getMountYaw()));
-            }
-            else {
-                pState.animationPack().update(entry.index(),animation,ageInTicks, 1f);
+            } else {
+                pState.animationPack().update(entry.index(), animation, ageInTicks, context.timeScale());
                 Optional<Entity> vehicle = mountState.getLastVehicle();
                 if (vehicle.isPresent()) {
                     Entity entity = vehicle.get();
@@ -91,7 +92,6 @@ public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarE
                     avatarRenderState.z = vec.z + pVec.z - vVec.z;
 
 
-
                     state.setMountYaw((float) Math.toDegrees(Math.atan2(pZ - vec.z, pX - vec.x)) + 90f);
 
 
@@ -106,7 +106,7 @@ public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarE
 
 
                     TransformChannel motion = animation.get("mount_motion");
-                    if (motion!=null){
+                    if (motion != null) {
                         float y = motion.getPosition().y;
                         avatarRenderState.y += (avatarRenderState.y - pY) * y + 0.01; // > 1?
                         rotateOffset.rotateY(org.joml.Math.toRadians(state.getMountYaw()));
@@ -137,6 +137,7 @@ public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarE
         return value;
     }
 
-    public record Entry(EntityAnimation animation, int index){}
+    public record Entry(EntityAnimation animation, int index) {
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.enderium.smoothmount.mixin.client;
 
 import com.enderium.smoothmount.client.animation.AnimationPack;
+import com.enderium.smoothmount.client.model.animation.entity.AnimationContext;
 import com.enderium.smoothmount.client.model.animation.entity.AnimationType;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState;
 import com.enderium.smoothmount.state.MountState;
@@ -34,6 +35,9 @@ public class AvatarRenderStateMixin implements MountState, PlayerAnimationState 
 
     @Unique
     private int animationIndex;
+
+    @Unique
+    private AnimationContext context;
 
     @Unique
     private WeakReference<Entity> lastMount = new WeakReference<>(null);
@@ -117,7 +121,17 @@ public class AvatarRenderStateMixin implements MountState, PlayerAnimationState 
 
     @Override
     public void state(AnimationState state) {
-        animationState=state;
+        animationState = state;
+    }
+
+    @Override
+    public AnimationContext getContext() {
+        return context;
+    }
+
+    @Override
+    public void setContext(AnimationContext context) {
+        this.context = context;
     }
 
     @Override

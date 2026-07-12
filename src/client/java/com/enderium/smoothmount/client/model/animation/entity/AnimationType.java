@@ -20,8 +20,11 @@ public interface AnimationType {
 
     AnimationType DefaultAnimation = new AnimationType() {
 
+        private final AnimationContext context = AnimationContext.of(1.3f);
+
         @Override
         public void mount(PlayerAnimationState state, EntityContext self, EntityContext vehicle) {
+            state.setContext(AnimationContext.DEFAULT);
             float yR = Mth.wrapDegrees(self.yRot() - vehicle.yRot());
             if (Math.abs(yR) < 35) AnimationType.start(state, Mount.MOUNT_BACK_M, Mount.MOUNT_BACK_E);
             else if (yR < 0) AnimationType.start(state, Mount.MOUNT_RIGHT_M, Mount.MOUNT_RIGHT_E);
@@ -31,6 +34,7 @@ public interface AnimationType {
 
         @Override
         public void dismount(PlayerAnimationState state, EntityContext self, EntityContext vehicle, Vec3 mountTo) {
+            state.setContext(context);
             Vec3 pos = self.getPos();
             float angleTo = (float) Math.toDegrees(Math.atan2(pos.z - mountTo.z, pos.x - mountTo.x)) + 90f;
             float angleCross = Mth.wrapDegrees(self.yBodyRot() - angleTo);
@@ -44,11 +48,13 @@ public interface AnimationType {
     AnimationType MinecartAnimation = new AnimationType() {
         @Override
         public void mount(PlayerAnimationState state, EntityContext self, EntityContext vehicle) {
+            state.setContext(AnimationContext.DEFAULT);
 
         }
 
         @Override
         public void dismount(PlayerAnimationState state, EntityContext self, EntityContext vehicle, Vec3 mountTo) {
+            state.setContext(AnimationContext.DEFAULT);
             AnimationType.start(state, Minecart.MINECART_MOUNT_M, Minecart.MINECART_MOUNT_E);
             state.animationPack().state().start(self.tickCount());
         }

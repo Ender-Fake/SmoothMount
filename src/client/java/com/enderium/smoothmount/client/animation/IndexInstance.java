@@ -12,12 +12,12 @@ public class IndexInstance {
         this.index = new int[length];
     }
 
-    public void clearRange(int start, int length){
-        Arrays.fill(index,start,start+length,0);
+    public void clearRange(int start, int length) {
+        Arrays.fill(index, start, start + length, 0);
     }
 
-    public void clear(int start, int end){
-        Arrays.fill(index,start,end,0);
+    public void clear(int start, int end) {
+        Arrays.fill(index, start, end, 0);
     }
 
 }

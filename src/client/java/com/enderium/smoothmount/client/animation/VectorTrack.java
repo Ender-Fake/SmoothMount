@@ -35,8 +35,8 @@ public class VectorTrack implements IndexProvider {
     protected VectorTrack(float[] timestamps, Vector3f[] keyframes, InterpolateMode[] modes) {
         this.timestamps = timestamps;
         this.modes = modes;
-        this.length=modes.length;
-        this.keyframes=keyframes;
+        this.length = modes.length;
+        this.keyframes = keyframes;
         /*this.keyframes=new float[keyframes.length*3];
         for (int i = 0; i < keyframes.length; i++) {
             int index =i*3;
@@ -134,7 +134,6 @@ public class VectorTrack implements IndexProvider {
 
     public enum InterpolateMode {
         Linear {
-
             @Override
             public void interpolate(Vector3f self, float alpha, final Vector3f[] keyframes, final int prev, final int next) {
                 keyframes[prev].lerp(keyframes[next], alpha, self);
@@ -152,7 +151,6 @@ public class VectorTrack implements IndexProvider {
             }
         },
         Step {
-
             @Override
             public void interpolate(Vector3f self, float alpha, final Vector3f[] keyframes, final int prev, final int next) {
                 self.set(keyframes[prev]);
