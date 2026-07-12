@@ -1,28 +1,23 @@
 package com.enderium.smoothmount.state;
 
+import com.enderium.smoothmount.client.render.camera.SmoothCameraModifier;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Quaternionf;
-
-import java.util.function.Supplier;
 
 public interface CameraModifier {
 
-    Vec3 smoothMount$lastPosition();
+    SmoothCameraModifier smoothMount$getSmoothModifier();
 
-    Quaternionf smoothMount$lastRotation();
+    Vec3 smoothMount$getSourcePosition();
 
-    Vec3 smoothMount$realPosition();
+    Vec3 smoothMount$getPosition();
 
-    Quaternionf smoothMount$realRotation();
+    void smoothMount$setPosition(Vec3 pos);
 
-    Supplier<Vec3> smoothMount$getSupplierPosition();
+    float smoothMount$getYaw();
 
-    void smoothMount$setSupplierPosition(@Nullable Supplier<@NotNull Vec3> supplier);
+    float smoothMount$getPitch();
 
-    Supplier<Quaternionf> smoothMount$getSupplierRotation();
+    void smoothMount$setRotation(float yaw, float pitch);
 
-    void smoothMount$setSupplierRotation(@Nullable Supplier<@NotNull Quaternionf> supplier);
 
 }

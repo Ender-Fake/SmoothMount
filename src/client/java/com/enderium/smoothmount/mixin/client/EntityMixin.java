@@ -6,20 +6,17 @@ import com.enderium.smoothmount.client.entity.VehicleTypes;
 import com.enderium.smoothmount.client.model.animation.entity.AnimationType;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState;
 import com.enderium.smoothmount.client.util.CameraLerpUtils;
-import com.enderium.smoothmount.state.CameraModifier;
 import com.enderium.smoothmount.state.MountState;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -82,7 +79,7 @@ public abstract class EntityMixin implements MountState, EntityContext {
     @Inject(method = "startRiding(Lnet/minecraft/world/entity/Entity;ZZ)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setPose(Lnet/minecraft/world/entity/Pose;)V"))
     public void startRide(Entity entity, boolean bl, boolean bl2, CallbackInfoReturnable<Boolean> cir) {
         Entity self = (Entity) (Object) this;
-        if (!(self instanceof Player player)) return;
+        if (!(self instanceof Avatar player)) return;
         if (!player.level().isClientSide()) return;
         lastVehicle = new WeakReference<>(entity);
         PlayerAnimationState state = (PlayerAnimationState) player;
@@ -90,7 +87,7 @@ public abstract class EntityMixin implements MountState, EntityContext {
 
         AnimationType type = VehicleTypes.getType(entity);
         state.animationType(type);
-        if (type!=null) {
+        if (type != null) {
             state.state(PlayerAnimationState.AnimationState.MOUNT);
             state.animationType().mount(state, (EntityContext) player, (EntityContext) entity);
         }
@@ -103,18 +100,15 @@ public abstract class EntityMixin implements MountState, EntityContext {
 
         lastMountPos = SmoothmountClient.instance().lastPlayerPos();
 
-        Camera camera = instance.gameRenderer.getMainCamera();
-        CameraModifier modifier = (CameraModifier) camera;
         long time = instance.options.getCameraType().isFirstPerson() ? 300 : 450;
-        modifier.smoothMount$setSupplierPosition(CameraLerpUtils.smoothToPosition(modifier, modifier.smoothMount$lastPosition(), time));
-        modifier.smoothMount$setSupplierRotation(CameraLerpUtils.smoothToRotation(modifier, new Quaternionf(modifier.smoothMount$lastRotation()), time));
+        CameraLerpUtils.startSmoothCamera(time);
 
 
     }
 
     @Inject(method = "stopRiding", at = @At("HEAD"))
     public void stopRide(CallbackInfo ci) {
-        if (!(((Object) this) instanceof Player player)) return;
+        if (!(((Object) this) instanceof Avatar player)) return;
         if (!player.level().isClientSide()) return;
 
         lastMountPos = player.oldPosition();
@@ -122,7 +116,7 @@ public abstract class EntityMixin implements MountState, EntityContext {
         state.smoothMount$stopMount();
 
         AnimationType type = state.animationType();
-        if (type!=null) {
+        if (type != null) {
             Vec3 findPos = findPosition(vehicle, player);
             state.state(PlayerAnimationState.AnimationState.DISMOUNT);
             type.dismount(state, (EntityContext) player, (EntityContext) vehicle, findPos);
@@ -131,10 +125,8 @@ public abstract class EntityMixin implements MountState, EntityContext {
         if (player != Minecraft.getInstance().player) return;
         //long time = 3000;
         long time = 250;
-        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        CameraModifier modifier = (CameraModifier) camera;
-        modifier.smoothMount$setSupplierPosition(CameraLerpUtils.smoothToPosition(modifier, modifier.smoothMount$lastPosition(), time));
-        modifier.smoothMount$setSupplierRotation(CameraLerpUtils.smoothToRotation(modifier, new Quaternionf(modifier.smoothMount$lastRotation()), time));
+        CameraLerpUtils.startSmoothCamera(time);
+
     }
 
 
