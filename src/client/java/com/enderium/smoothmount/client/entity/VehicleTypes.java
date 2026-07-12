@@ -18,10 +18,10 @@ public class VehicleTypes {
         return entity instanceof Pig;
     }
 
-    public static AnimationType getType(Entity entity){
-        if (entity instanceof Pig)return AnimationType.DefaultAnimation;
+    public static AnimationType getType(Entity entity) {
+        if (entity instanceof Pig) return AnimationType.DefaultAnimation;
         if (entity instanceof Camel) return null;
-        if (entity instanceof VehicleEntity) return AnimationType.MinecartAnimation;
+        //if (entity instanceof VehicleEntity) return AnimationType.MinecartAnimation;
         if (entity instanceof AbstractHorse) return AnimationType.DefaultAnimation;
         return null;
     }
