@@ -7,7 +7,6 @@ import com.enderium.smoothmount.client.model.animation.entity.AnimationType;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState;
 import com.enderium.smoothmount.state.MountState;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.client.entity.ClientAvatarEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
@@ -27,7 +26,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Mixin(AvatarRenderer.class)
-public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarEntity> {
+public class AvatarRendererMixin<AvatarlikeEntity extends Avatar> {
 
     @Unique
     private Entry[] animations;
@@ -67,12 +66,11 @@ public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarE
         if (playerState.animationPack().isStarted() && playerState.getIndex() != -1) {
             Entry entry = animations[playerState.getIndex()];
             EntityAnimation animation = entry.animation();
+            pState.animationPack().update(entry.index(), animation, ageInTicks, context.timeScale());
             if (pState.state() == PlayerAnimationState.AnimationState.MOUNT) {
-                pState.animationPack().update(entry.index(), animation, ageInTicks, context.timeScale());
                 TransformChannel channel = animation.offsetTransform();
                 channel.position().currentValue.div(16, rotateOffset).rotateY(org.joml.Math.toRadians(state.getMountYaw()));
             } else {
-                pState.animationPack().update(entry.index(), animation, ageInTicks, context.timeScale());
                 Optional<Entity> vehicle = mountState.getLastVehicle();
                 if (vehicle.isPresent()) {
                     Entity entity = vehicle.get();
@@ -130,10 +128,10 @@ public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarE
     @ModifyVariable(method = "setupRotations(Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;FF)V", index = 3, at = @At(value = "HEAD"), argsOnly = true)
     public float addRot(float value, @Local(argsOnly = true) AvatarRenderState state) {
         PlayerAnimationState pState = (PlayerAnimationState) state;
-        MountState mState = (MountState) state;
-        if (!pState.smoothMount$IsStopped()) return mState.getMountYaw();
-        /*if (state.isPassenger && !pState.smoothMount$IsStopped()) return mState.getMountYaw();
-        if (pState.dismountState().isEnabled()) return mState.getMountYaw();*/
+        if (pState.smoothMount$isInit()) {
+            MountState mState = (MountState) state;
+            if (!pState.smoothMount$IsStopped()) return mState.getMountYaw();
+        }
         return value;
     }
 

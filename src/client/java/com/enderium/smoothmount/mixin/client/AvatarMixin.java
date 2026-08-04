@@ -28,6 +28,11 @@ public class AvatarMixin implements PlayerAnimationState {
 
 
     @Override
+    public boolean smoothMount$isInit() {
+        return true;
+    }
+
+    @Override
     public AnimationType animationType() {
         return animationType;
     }

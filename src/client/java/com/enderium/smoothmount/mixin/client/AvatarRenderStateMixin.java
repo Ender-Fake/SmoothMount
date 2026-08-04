@@ -18,6 +18,8 @@ import java.util.Optional;
 public class AvatarRenderStateMixin implements MountState, PlayerAnimationState {
 
     @Unique
+    private boolean init = false;
+    @Unique
     private Vec3 playerPos = Vec3.ZERO;
     @Unique
     private Vec3 lastMountPos = Vec3.ZERO;
@@ -92,6 +94,17 @@ public class AvatarRenderStateMixin implements MountState, PlayerAnimationState 
     public Vec3 smoothMount$getVehicleAttachmentPoint(Entity entity) {
         Optional<Entity> vehicle = getLastVehicle();
         return vehicle.isPresent() ? ((MountState) vehicle.get()).smoothMount$getVehicleAttachmentPoint(entity) : Vec3.ZERO;
+    }
+
+    @Override
+    public void smoothMount$copyFrom(PlayerAnimationState state) {
+        PlayerAnimationState.super.smoothMount$copyFrom(state);
+        init = true;
+    }
+
+    @Override
+    public boolean smoothMount$isInit() {
+        return init;
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.enderium.smoothmount.client.animation.AnimationPack;
 
 public interface PlayerAnimationState {
 
+    boolean smoothMount$isInit();
+
     AnimationType animationType();
 
     void animationType(AnimationType type);
