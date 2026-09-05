@@ -5,7 +5,7 @@ import net.minecraft.client.model.geom.ModelPart;
 
 import java.util.Optional;
 
-public class EMFCompat {
+public class EMFModelCompat {
 
     public static final Runnable EMPTY_FUNCTION = () -> {
     };

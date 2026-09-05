@@ -6,7 +6,8 @@ import com.enderium.smoothmount.client.animation.definition.ModelAnimation;
 import com.enderium.smoothmount.client.model.animation.entity.AnimationContext;
 import com.enderium.smoothmount.client.model.animation.entity.AnimationType;
 import com.enderium.smoothmount.client.model.animation.entity.PlayerAnimationState;
-import com.enderium.smoothmount.client.model.compat.EMFCompat;
+import com.enderium.smoothmount.client.model.compat.EMFModelCompat;
+import com.enderium.smoothmount.compat.ModelCompat;
 import com.enderium.smoothmount.compat.OtherRenderPart;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -52,7 +53,7 @@ public class PlayerModelMixin extends HumanoidModel<AvatarRenderState> {
 
         smBodyParts.addAll(List.of(leftLeg, rightLeg, leftArm, rightArm, head));
 
-        emfCompat = EMFCompat.getModelFunction(modelPart);
+        emfCompat = EMFModelCompat.getModelFunction(modelPart);
 
     }
 
@@ -63,8 +64,16 @@ public class PlayerModelMixin extends HumanoidModel<AvatarRenderState> {
     public void setAnim(AvatarRenderState avatarRenderState, CallbackInfo ci) {
         PlayerAnimationState pState = (PlayerAnimationState) avatarRenderState;
         boolean b = pState.smoothMount$IsStopped();
-        if (root instanceof OtherRenderPart part) part.enableVanilla(!b);
-        if (b) return;
+
+
+//        if (root instanceof OtherRenderPart part) part.enableVanilla(!b);
+
+
+        if (b) {
+            ModelCompat.animationStop();
+            return;
+        }
+        ModelCompat.animationStart();
         ci.cancel();
         resetPose();
 

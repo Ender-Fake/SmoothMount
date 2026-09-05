@@ -13,11 +13,11 @@ import traben.entity_model_features.models.parts.EMFModelPartRoot;
 public class EMFModelPartRootMixin {
 
 
-    @Inject(method = "triggerManualAnimation", at = @At("HEAD"), cancellable = true)
+/*    @Inject(method = "triggerManualAnimation", at = @At("HEAD"), cancellable = true)
     public void cancelArms(PoseStack matrices, CallbackInfo ci) {
         if (((OtherRenderPart) this).useVanilla()) ci.cancel();
 
-    }
+    }*/
 
 
 }

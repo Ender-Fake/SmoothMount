@@ -39,7 +39,8 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modCompileOnly "maven.modrinth:entity-model-features:3.0.17-fabric-1.21.11"
+    modCompileOnly "maven.modrinth:entitytexturefeatures:7.2.1-fabric-1.21.11"
+    modCompileOnly "maven.modrinth:entity-model-features:3.3.5-fabric-1.21.11"
 }
 
 processResources {

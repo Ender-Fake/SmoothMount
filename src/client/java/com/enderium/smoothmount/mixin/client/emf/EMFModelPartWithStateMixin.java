@@ -1,6 +1,7 @@
 package com.enderium.smoothmount.mixin.client.emf;
 
 
+import com.enderium.smoothmount.compat.EMFCompat;
 import com.enderium.smoothmount.compat.OtherRenderPart;
 import com.enderium.smoothmount.mixin.client.accesor.ModelPartAccessor;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -14,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_model_features.models.parts.EMFModelPart;
+import traben.entity_model_features.models.parts.EMFModelPartRoot;
 import traben.entity_model_features.models.parts.EMFModelPartWithState;
 
 import java.lang.invoke.MethodHandle;
@@ -37,28 +39,31 @@ public abstract class EMFModelPartWithStateMixin extends EMFModelPart implements
         try {
             Class<?> aClass = Class.forName("traben.entity_model_features.models.parts.EMFModelPartWithState");
             log.info("[SmoothMount] EMF detected! Compatibility mode enabled.");
-            MethodHandles.Lookup lookup = MethodHandles.lookup();
-            vanillaRender = lookup.findVirtual(aClass, "renderLikeVanilla", MethodType.methodType(Void.TYPE, PoseStack.class, VertexConsumer.class, int.class, int.class, int.class));
 
+            EMFCompat.init();
+
+            /*MethodHandles.Lookup lookup = MethodHandles.lookup();
+            vanillaRender = lookup.findVirtual(aClass, "renderLikeVanilla", MethodType.methodType(Void.TYPE, PoseStack.class, VertexConsumer.class, int.class, int.class, int.class));
+*/
         } catch (ClassNotFoundException e) {
             //smoothmount$emfDetected = false;
             log.warn("[SmoothMount] EMF not detected.");
-        } catch (NoSuchMethodException | IllegalAccessException e) {
+        } /*catch (NoSuchMethodException | IllegalAccessException e) {
             log.error("Find Error", e);
-        }
+        }*/
     }
 
     @Unique
     private boolean useVanilla;
 
-    public EMFModelPartWithStateMixin(List<Cube> cuboids, Map<String, ModelPart> children) {
-        super(cuboids, children);
+    public EMFModelPartWithStateMixin(List<Cube> cuboids, Map<String, ModelPart> children, EMFModelPartRoot root) {
+        super(cuboids, children, root);
     }
 
 
-    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V",
+/*    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V",
             //@Inject(method = "render(Ljava/lang/Object;Ljava/lang/Object;III)V",
-            at = @At("HEAD"), /*remap = false,*/ cancellable = true)
+            at = @At("HEAD"), *//*remap = false,*//* cancellable = true)
     //public void fixRender(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int j, int k, CallbackInfo ci) {
     public void fixRender(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int k, CallbackInfo ci) {
         if (useVanilla()) try {
@@ -69,7 +74,7 @@ public abstract class EMFModelPartWithStateMixin extends EMFModelPart implements
         }
 
 
-    }
+    }*/
 
     @Override
     public boolean useVanilla() {
